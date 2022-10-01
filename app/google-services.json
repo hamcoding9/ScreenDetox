@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "37631157111",
+    "firebase_url": "https://screendetox-5c5e0-default-rtdb.firebaseio.com",
+    "project_id": "screendetox-5c5e0",
+    "storage_bucket": "screendetox-5c5e0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37631157111:android:204617d6bb310e2310f772",
+        "android_client_info": {
+          "package_name": "com.example.screendetox"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "37631157111-57jm86rskf46sqm5vg9ln8kbjgb7rod2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALLpHZksI9JHawtRpdotKmwelGbWXiQrM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "37631157111-57jm86rskf46sqm5vg9ln8kbjgb7rod2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
