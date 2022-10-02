@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">ScreenDetox</string>
     <string name="permission">사용자 권한 허용을 해주세요</string>
+    <string name="write_name">이름을 적어주세요</string>
 </resources>

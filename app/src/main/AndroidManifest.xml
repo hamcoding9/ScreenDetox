@@ -27,5 +27,6 @@
                 android:value="" />
         </activity>
         <activity android:name=".LoginActivity"/>
+        <activity android:name=".GroupActivity"/>
     </application>
 </manifest>
