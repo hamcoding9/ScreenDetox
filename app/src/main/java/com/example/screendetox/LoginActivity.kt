@@ -62,6 +62,7 @@ class LoginActivity:AppCompatActivity() {
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
+                        // Sign in success, update UI with the signed-in user's information
                         Toast.makeText(
                             this,
                             "회원가입을 성공했습니다. 로그인 버튼을 눌러 로그인해주세요.",

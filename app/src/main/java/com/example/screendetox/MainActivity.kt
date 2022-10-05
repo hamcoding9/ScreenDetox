@@ -7,12 +7,15 @@ import android.app.usage.UsageStatsManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.screendetox.group.GroupActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.util.*
@@ -26,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     var permissionTv: TextView? = null
 
     // 로그인 정보
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val auth: FirebaseAuth = Firebase.auth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,15 +54,18 @@ class MainActivity : AppCompatActivity() {
             else {
                 loadStatistics() // 사용자의 사용 시간을 불러오는 함수
                 startActivity(Intent(this, GroupActivity::class.java))
+                finish()
             }
         }
-
+        else {
+            showHideNoPermission()
+            enableBtn!!.setOnClickListener {view: View? -> startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))}
+        }
     }
 
-    // 지난 24시간 동안의 유저의 사용 시간을 불러오는 함수 (List에 담기)
-    fun loadStatistics()
+    private fun loadStatistics()
     {
-        val usm = this.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
+        val usm = this.getSystemService(AppCompatActivity.USAGE_STATS_SERVICE) as UsageStatsManager
 
         // queryUsageStats(intervalType, beginTime, endTime) : MutableList<UsageStats!>!
         // 지난 24시간 동안의 현재 사용자의 어플 사용 기록을 appList에 저장한다
@@ -72,14 +78,14 @@ class MainActivity : AppCompatActivity() {
         // totalTimeInForeground: Get the total time this package spent in the foreground, measured in milliseconds.
         appList = appList.stream().filter{ app: UsageStats -> app.totalTimeInForeground > 0}
             .collect(Collectors.toList())
-        
+
         // Group the usageStats by application and sort them by total time in foreground
         if (appList.size > 0){
             val mySortedMap: MutableMap<String, UsageStats> = TreeMap()
             for (usageStats in appList) {
                 mySortedMap[usageStats.packageName] = usageStats
             }
-            // 내 사용기록을 불러 왔으니 DB에 저장
+            // 내 사용기록을 불러 왔으니 나의 사용 시간을 DB에 업데이트
             saveAppsUsage(mySortedMap)
         }
     }
@@ -97,6 +103,7 @@ class MainActivity : AppCompatActivity() {
         var userDB = Firebase.database.reference.child("Users")
         val userId = getCurrentUserID()
         val currentUserDB = userDB.child(userId)
+        // DB에 업데이트
         val user = mutableMapOf<String, Any>()
         user["userId"] = userId
         user["totalTime"] = usageTotaltime
@@ -114,10 +121,11 @@ class MainActivity : AppCompatActivity() {
         return auth.currentUser?.uid.orEmpty()
     }
 
-/*
-* check if PACKAGE_USAGE_STATS permission is allowed for this application
-* @return true if permission granted
-* */
+
+    /*
+    * check if PACKAGE_USAGE_STATS permission is allowed for this application
+    * @return true if permission granted
+    * */
     private val grantStatus: Boolean
         private get() {
             val appOps = applicationContext.getSystemService(APP_OPS_SERVICE) as AppOpsManager

@@ -1,33 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="20dp">
+    android:layout_height="match_parent">
 
-<!--    <ImageView-->
-<!--        android:id="@+id/profile_image"-->
-<!--        android:layout_width="70dp"-->
-<!--        android:layout_height="70dp"-->
-<!--        android:adjustViewBounds="true"-->
-<!--        android:scaleType="centerCrop"/>-->
-
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/usersRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/user_name"
-            android:textSize="25dp"
-            android:text="사용자"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+        android:layout_height="match_parent" />
 
-        <TextView
-            android:id="@+id/usage_duration"
-            android:textSize="30dp"
-            android:text="3시간 40분"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-    </LinearLayout>
 </LinearLayout>

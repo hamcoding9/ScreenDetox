@@ -2,36 +2,59 @@
 GroupActivity: 다른 사람들의 사용 시간을 볼 수 있음.
 2022.10.02 : 현재까지 가입한 모든 사용자들의 사용 시간 볼 수 있음.
  */
-package com.example.screendetox
+package com.example.screendetox.group
 
 import android.os.Bundle
-import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.screendetox.data.User
+import com.example.screendetox.databinding.ActivityGroupBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 class GroupActivity: AppCompatActivity() {
+    // 바인딩
+    private lateinit var binding: ActivityGroupBinding
     // 계정 정보
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     // 다른 사람의 사용 시간을 알아야 하므로 userDB 필요
     private lateinit var userDB: DatabaseReference
-    // ListView 띄워야 하므로 ListView 불러오기
-    private lateinit var usersList: ListView
+    // 유저 객체를 어댑터 쪽으로 담을 어레이 리스트
+    private lateinit var userList : ArrayList<User>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_group)
+        binding = ActivityGroupBinding.inflate(layoutInflater)
+        binding.usersRecyclerView.layoutManager = LinearLayoutManager(this)
 
+        setContentView(binding.root)
+        // show users
+        userList = arrayListOf<User>()
+        // 파이어베이스 연동
         userDB = Firebase.database.reference.child("Users")
-        val currentUserDB = userDB.child(getCurrentUserID())
+        // DB에 있는 값을 UserList에 담는다
+        userDB.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()){
+                    for (userSnapshot in snapshot.children){
+                        val user = userSnapshot.getValue(User::class.java)
+                        userList.add(user!!)
+                    }
+                    binding.usersRecyclerView.adapter = UserAdapter(userList)
+                }
+            }
 
-        // UserGroup 보여주기
-//        ShowUserGroup()
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
     }
-
 
 /*
         // 사용자 닉네임 설정하기

@@ -21,9 +21,4 @@
         android:background="@color/white"
         android:text="권한 설정하러 가기" />
 
-    <ListView
-        android:visibility="gone"
-        android:id="@+id/users_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
 </LinearLayout>
