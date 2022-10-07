@@ -5,11 +5,13 @@ GroupActivity: 다른 사람들의 사용 시간을 볼 수 있음.
 package com.example.screendetox.group
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.screendetox.R
 import com.example.screendetox.data.User
-import com.example.screendetox.databinding.ActivityGroupBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -19,8 +21,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 class GroupActivity: AppCompatActivity() {
-    // 바인딩
-    private lateinit var binding: ActivityGroupBinding
+    private lateinit var usersRecyclerView : RecyclerView
     // 계정 정보
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     // 다른 사람의 사용 시간을 알아야 하므로 userDB 필요
@@ -30,12 +31,15 @@ class GroupActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityGroupBinding.inflate(layoutInflater)
-        binding.usersRecyclerView.layoutManager = LinearLayoutManager(this)
-
-        setContentView(binding.root)
+        setContentView(R.layout.activity_group)
+        usersRecyclerView = findViewById(R.id.usersRecyclerView)
+        usersRecyclerView.layoutManager = LinearLayoutManager(this)
         // show users
         userList = arrayListOf<User>()
+        getUserData()
+    }
+
+    private fun getUserData() {
         // 파이어베이스 연동
         userDB = Firebase.database.reference.child("Users")
         // DB에 있는 값을 UserList에 담는다
@@ -46,10 +50,9 @@ class GroupActivity: AppCompatActivity() {
                         val user = userSnapshot.getValue(User::class.java)
                         userList.add(user!!)
                     }
-                    binding.usersRecyclerView.adapter = UserAdapter(userList)
+                    usersRecyclerView.adapter = UserAdapter(userList)
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
             }
