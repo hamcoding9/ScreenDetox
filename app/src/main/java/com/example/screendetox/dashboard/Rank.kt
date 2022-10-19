@@ -5,7 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.screendetox.R
+import com.example.screendetox.data.User
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -18,17 +28,15 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class Rank : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    // 계정 정보
+    private var auth: FirebaseAuth = FirebaseAuth.getInstance()
+    // 다른 사람의 사용 시간을 알아야 하므로 userDB 필요
+    private lateinit var userDB: DatabaseReference
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var adapter : UserAdapter
+    private lateinit var recyclerView : RecyclerView
+    // user 정보를 담아서 adapter에 전달할 userList
+    private lateinit var userList : ArrayList<User>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,23 +46,34 @@ class Rank : Fragment() {
         return inflater.inflate(R.layout.fragment_rank, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment Rank.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            Rank().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val layoutManager = LinearLayoutManager(context)
+        getUserData()
+        recyclerView = view.findViewById(R.id.usersRecyclerView)
+        recyclerView.layoutManager = layoutManager
+        recyclerView.setHasFixedSize(true)
+        adapter = UserAdapter(userList)
+        recyclerView.adapter = adapter
+    }
+
+    private fun getUserData() {
+        userList = arrayListOf<User>()
+        // 파이어베이스 연동
+        userDB = Firebase.database.reference.child("Users")
+        // DB에 있는 값을 UserList에 담는다
+        userDB.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()){
+                    for (userSnapshot in snapshot.children){
+                        val user = userSnapshot.getValue(User::class.java)
+                        userList.add(user!!)
+                    }
                 }
             }
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
     }
 }

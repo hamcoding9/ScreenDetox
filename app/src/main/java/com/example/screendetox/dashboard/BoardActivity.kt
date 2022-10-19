@@ -1,7 +1,3 @@
-/*
-GroupActivity: 다른 사람들의 사용 시간을 볼 수 있음.
-2022.10.02 : 현재까지 가입한 모든 사용자들의 사용 시간 볼 수 있음.
- */
 package com.example.screendetox.dashboard
 
 
@@ -9,27 +5,12 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.screendetox.R
-import com.example.screendetox.data.User
 import com.example.screendetox.databinding.ActivityBoardBinding
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 
 class BoardActivity: AppCompatActivity() {
-    private lateinit var usersRecyclerView : RecyclerView
-    // 계정 정보
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
-    // 다른 사람의 사용 시간을 알아야 하므로 userDB 필요
-    private lateinit var userDB: DatabaseReference
-    // 유저 객체를 어댑터 쪽으로 담을 어레이 리스트
-    private lateinit var userList : ArrayList<User>
     // 뷰 바인딩
     private lateinit var binding: ActivityBoardBinding
 
@@ -38,24 +19,16 @@ class BoardActivity: AppCompatActivity() {
         binding = ActivityBoardBinding.inflate(layoutInflater)
         setContentView(binding.root)
         replaceFragment(Rank()) // 기본 fragment: rank 화면
-        // 네비게이션 바
+        // 네비게이션 탭바 클릭 및 프래그먼트 이동
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.ranking -> replaceFragment(Rank())
                 R.id.stats -> replaceFragment(Stats())
-
                 else -> {
                 }
             }
             true
         }
-
-        // 예전 그룹 액티비티 코드
-        usersRecyclerView = findViewById(R.id.usersRecyclerView)
-        usersRecyclerView.layoutManager = LinearLayoutManager(this)
-        // show users
-        userList = arrayListOf<User>()
-        getUserData()
     }
 
     private fun replaceFragment(fragment : Fragment){
@@ -63,26 +36,6 @@ class BoardActivity: AppCompatActivity() {
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frame_layout,fragment)
         fragmentTransaction.commit()
-    }
-
-    private fun getUserData() {
-        // 파이어베이스 연동
-        userDB = Firebase.database.reference.child("Users")
-        // DB에 있는 값을 UserList에 담는다
-        userDB.addValueEventListener(object : ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()){
-                    for (userSnapshot in snapshot.children){
-                        val user = userSnapshot.getValue(User::class.java)
-                        userList.add(user!!)
-                    }
-                    usersRecyclerView.adapter = UserAdapter(userList)
-                }
-            }
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-        })
     }
 
 /*
