@@ -13,7 +13,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.screendetox.group.GroupActivity
+import com.example.screendetox.dashboard.BoardActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             }
             else {
                 loadStatistics() // 사용자의 사용 시간을 불러오는 함수
-                startActivity(Intent(this, GroupActivity::class.java))
+                startActivity(Intent(this, BoardActivity::class.java))
                 finish()
             }
         }

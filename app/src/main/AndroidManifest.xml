@@ -27,6 +27,6 @@
                 android:value="" />
         </activity>
         <activity android:name=".LoginActivity"/>
-        <activity android:name=".group.GroupActivity"/>
+        <activity android:name=".dashboard.BoardActivity"/>
     </application>
 </manifest>

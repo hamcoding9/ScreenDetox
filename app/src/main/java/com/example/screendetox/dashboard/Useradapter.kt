@@ -1,4 +1,4 @@
-package com.example.screendetox.group
+package com.example.screendetox.dashboard
 
 import android.view.LayoutInflater
 import android.view.View

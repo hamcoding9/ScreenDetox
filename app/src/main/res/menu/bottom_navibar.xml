@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Ranking"
+        android:id="@+id/ranking"
+        android:icon="@drawable/ic_baseline_equalizer_24" />
+    <item android:title="Stats"
+        android:id="@+id/stats"
+        android:icon="@drawable/ic_baseline_person_24"/>
+</menu>
