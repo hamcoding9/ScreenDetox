@@ -17,16 +17,10 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-// TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [Rank.newInstance] factory method to
- * create an instance of this fragment.
- */
 class Rank : Fragment() {
     // 계정 정보
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -72,7 +66,6 @@ class Rank : Fragment() {
                 }
             }
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
             }
         })
     }
