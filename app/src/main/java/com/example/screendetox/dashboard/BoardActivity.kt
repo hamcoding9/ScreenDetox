@@ -1,6 +1,7 @@
 package com.example.screendetox.dashboard
 
 
+import android.app.usage.UsageStats
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -29,11 +30,24 @@ class BoardActivity: AppCompatActivity() {
             }
             true
         }
+        // Rank fragment에서 사용할 appUsageMap 받기
+        //val mySortedMap: HashMap<String, UsageStats> = intent.getSerializableExtra("appUsageMap") as HashMap<String, UsageStats>
+        // Rank fragment로 전달
     }
 
     private fun replaceFragment(fragment : Fragment){
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
+        // Stats Fragment인 경우 데이터 전달
+        if(fragment==Stats()){
+            val mySortedMap: HashMap<String, UsageStats> = intent.getSerializableExtra("appUsageMap") as HashMap<String, UsageStats>
+            var stats = Stats()
+            var bundle = Bundle()
+            bundle.putSerializable("mySortedMap", mySortedMap)
+            stats.arguments = bundle
+            fragmentTransaction.replace(R.id.frame_layout, stats)
+            fragmentTransaction.commit()
+        }
         fragmentTransaction.replace(R.id.frame_layout,fragment)
         fragmentTransaction.commit()
     }

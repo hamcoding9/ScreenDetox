@@ -1,5 +1,6 @@
 package com.example.screendetox.dashboard
 
+import android.app.usage.UsageStats
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,17 +29,21 @@ class Stats : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        // 데이터 받아오기
+        val mySortedMap: HashMap<String, UsageStats> = arguments?.getSerializable("mySortedMap") as HashMap<String, UsageStats>
+        // 데이터 화면에서 보여주기
+        showAppUsage(mySortedMap)
         return inflater.inflate(R.layout.fragment_stats, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val layoutManager = LinearLayoutManager(context)
-        getStatistics()
     }
 
-    private fun getStatistics() {
-        TODO("Not yet implemented")
-        //TODO Intent로 List 전달하기
+
+    private fun showAppUsage(mySortedMap: HashMap<String, UsageStats>) {
+        
     }
+
 }

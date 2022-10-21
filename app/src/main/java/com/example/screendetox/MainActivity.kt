@@ -18,7 +18,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 
@@ -81,13 +80,22 @@ class MainActivity : AppCompatActivity() {
 
         // Group the usageStats by application and sort them by total time in foreground
         if (appList.size > 0){
-            val mySortedMap: MutableMap<String, UsageStats> = TreeMap()
+            //val mySortedMap: MutableMap<String, UsageStats> = TreeMap()
+            val mySortedMap: HashMap<String, UsageStats> = HashMap()
             for (usageStats in appList) {
                 mySortedMap[usageStats.packageName] = usageStats
             }
             // 내 사용기록을 불러 왔으니 나의 사용 시간을 DB에 업데이트
             saveAppsUsage(mySortedMap)
+            // 사용 시간 Board Acitivty로 보내기
+            passAppUsage(mySortedMap)
         }
+    }
+
+    private fun passAppUsage(mySortedMap: HashMap<String, UsageStats>) {
+        var appUsageMapIntent = Intent(this, BoardActivity::class.java)
+        appUsageMapIntent.putExtra("appUsageMap", mySortedMap)
+        startActivity(appUsageMapIntent)
     }
 
     // 전체 시간(int) DB에 저장하기

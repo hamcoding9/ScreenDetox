@@ -1,5 +1,6 @@
 package com.example.screendetox.dashboard
 
+import android.app.usage.UsageStats
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -69,4 +70,5 @@ class Rank : Fragment() {
             }
         })
     }
+
 }
