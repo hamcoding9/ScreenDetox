@@ -31,7 +31,9 @@ class BoardActivity: AppCompatActivity() {
             true
         }
         // Rank fragment에서 사용할 appUsageMap 받기
-        //val mySortedMap: HashMap<String, UsageStats> = intent.getSerializableExtra("appUsageMap") as HashMap<String, UsageStats>
+        val mySortedMap: HashMap<String, UsageStats> = intent.getSerializableExtra("appUsageMap") as HashMap<String, UsageStats>
+        //if(!mySortedMap.isNullOrEmpty()){Log.i("hashmap","mysortedmap'size is %d".format(mySortedMap.size))}
+
         // Rank fragment로 전달
     }
 
