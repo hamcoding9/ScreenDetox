@@ -2,8 +2,6 @@ package com.example.screendetox
 
 import android.Manifest
 import android.app.AppOpsManager
-import android.app.usage.UsageStats
-import android.app.usage.UsageStatsManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -11,15 +9,11 @@ import android.provider.Settings
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.screendetox.dashboard.BoardActivity
+import com.example.screendetox.dashboard.RankingActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import java.util.concurrent.TimeUnit
-import java.util.stream.Collectors
 
 class MainActivity : AppCompatActivity() {
 
@@ -51,9 +45,8 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this, LoginActivity::class.java))
             }
             else {
-                loadStatistics() // 사용자의 사용 시간을 불러오는 함수
-                startActivity(Intent(this, BoardActivity::class.java))
-                finish()
+                startActivity(Intent(this, RankingActivity::class.java))
+                //finish()
             }
         }
         else {
@@ -61,74 +54,6 @@ class MainActivity : AppCompatActivity() {
             enableBtn!!.setOnClickListener {view: View? -> startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))}
         }
     }
-
-    private fun loadStatistics()
-    {
-        val usm = this.getSystemService(AppCompatActivity.USAGE_STATS_SERVICE) as UsageStatsManager
-
-        // queryUsageStats(intervalType, beginTime, endTime) : MutableList<UsageStats!>!
-        // 지난 24시간 동안의 현재 사용자의 어플 사용 기록을 appList에 저장한다
-        var appList = usm.queryUsageStats(
-            UsageStatsManager.INTERVAL_DAILY,
-            System.currentTimeMillis() - 1000 * 2600 * 24,
-            System.currentTimeMillis())
-
-        // 지난 24시간 동안 사용한 어플리케이션(사용 시간 > 0인 것만 filter)만 불러오기
-        // totalTimeInForeground: Get the total time this package spent in the foreground, measured in milliseconds.
-        appList = appList.stream().filter{ app: UsageStats -> app.totalTimeInForeground > 0}
-            .collect(Collectors.toList())
-
-        // Group the usageStats by application and sort them by total time in foreground
-        if (appList.size > 0){
-            //val mySortedMap: MutableMap<String, UsageStats> = TreeMap()
-            val mySortedMap: HashMap<String, UsageStats> = HashMap()
-            for (usageStats in appList) {
-                mySortedMap[usageStats.packageName] = usageStats
-            }
-            // 내 사용기록을 불러 왔으니 나의 사용 시간을 DB에 업데이트
-            saveAppsUsage(mySortedMap)
-            // 사용 시간 Board Acitivty로 보내기
-            passAppUsage(mySortedMap)
-        }
-    }
-
-    private fun passAppUsage(mySortedMap: HashMap<String, UsageStats>) {
-        var appUsageMapIntent = Intent(this, BoardActivity::class.java)
-        appUsageMapIntent.putExtra("appUsageMap", mySortedMap)
-        startActivity(appUsageMapIntent)
-    }
-
-    // 전체 시간(int) DB에 저장하기
-    private fun saveAppsUsage(mySortedMap: Map<String, UsageStats>){
-        val usageStatsList: List<UsageStats> = ArrayList(mySortedMap.values) // UsageStats만 모아서 list
-
-        // 전체 시간 구하기
-        val totalTime = usageStatsList.stream().map {obj: UsageStats -> obj.totalTimeInForeground }
-            .mapToLong {obj: Long -> obj}.sum()
-        // 전체 시간 @@H @@M @@S 형태로 바꾸기
-        val usageTotaltime = getDurationBreakdown(totalTime)
-        // 전체 시간(string) DB에 저장하기
-        var userDB = Firebase.database.reference.child("Users")
-        val userId = getCurrentUserID()
-        val currentUserDB = userDB.child(userId)
-        // DB에 업데이트
-        val user = mutableMapOf<String, Any>()
-        user["userId"] = userId
-        user["totalTime"] = usageTotaltime
-        currentUserDB.updateChildren(user)
-    }
-
-    // User ID 가져오는 함수
-    // login 되어 있지 않으면 다시 login 화면으로, login 되어 있으면 id return
-    private fun getCurrentUserID(): String {
-        if (auth.currentUser == null){
-            Toast.makeText(this, "로그인이 되어있지않습니다.", Toast.LENGTH_SHORT).show()
-            // 다시 로그인 화면으로 돌아옴
-            finish()
-        }
-        return auth.currentUser?.uid.orEmpty()
-    }
-
 
     /*
     * check if PACKAGE_USAGE_STATS permission is allowed for this application
@@ -164,21 +89,5 @@ class MainActivity : AppCompatActivity() {
     fun showHideWithPermission() {
         enableBtn!!.visibility = View.GONE
         permissionTv!!.visibility = View.GONE
-    }
-
-    /**
-     * helper method to get string in format hh:mm:ss from miliseconds
-     * @param millis (application time in foreground)
-     * @return string in format hh:mm:ss from miliseconds
-     */
-    private fun getDurationBreakdown(millis:Long): String{
-        var millis = millis
-        require(millis >= 0) { " Duration must be greater than zero! "}
-        val hours = TimeUnit.MILLISECONDS.toHours(millis)
-        millis -= TimeUnit.HOURS.toMillis(hours)
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(millis)
-        millis -= TimeUnit.MINUTES.toMillis(minutes)
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(millis)
-        return "$hours 시간 $minutes 분 $seconds 초"
     }
 }
