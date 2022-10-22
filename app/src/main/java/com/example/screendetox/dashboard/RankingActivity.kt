@@ -12,7 +12,6 @@ import com.example.screendetox.R
 import com.example.screendetox.data.User
 import com.example.screendetox.databinding.ActivityRankingBinding
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -24,7 +23,7 @@ import java.util.stream.Collectors
 
 class RankingActivity : AppCompatActivity() {
     // 로그인 정보
-    private val auth: FirebaseAuth = Firebase.auth
+    var auth: FirebaseAuth = FirebaseAuth.getInstance()
     // 다른 사람의 사용 시간을 알아야 하므로 userDB 필요
     private lateinit var userDB: DatabaseReference
     // 뷰 바인딩
@@ -41,11 +40,15 @@ class RankingActivity : AppCompatActivity() {
         binding = ActivityRankingBinding.inflate(layoutInflater)
         setContentView(binding.root)
         // 네비게이션 탭바 터치에 따른 액티비티 이동
+        //Use NavigationBarView.setOnItemReselectedListener(NavigationBarView.OnItemReselectedListener) instead.
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.ranking -> {
                 }
-                R.id.stats -> startActivity(Intent(this, StatsActivity::class.java))
+                R.id.stats -> {
+                    startActivity(Intent(this, StatsActivity::class.java))
+                    overridePendingTransition(0,0)
+                }
                 else -> {
                 }
             }
@@ -91,6 +94,27 @@ class RankingActivity : AppCompatActivity() {
         currentUserDB.updateChildren(user)
     }
 
+    private fun loadUsers() {
+        userList = arrayListOf<User>()
+        // 파이어베이스 연동
+        userDB = Firebase.database.reference.child("Users")
+        // DB에 있는 값을 UserList에 담는다
+        userDB.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()){
+                    for (userSnapshot in snapshot.children){
+                        val user = userSnapshot.getValue(User::class.java)
+                        userList.add(user!!)
+                    }
+                    adapter = UserAdapter(userList)
+                    recyclerView.adapter = adapter
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
+    }
+
     // User ID 가져오는 함수
     // login 되어 있지 않으면 다시 login 화면으로, login 되어 있으면 id return
     private fun getCurrentUserID(): String {
@@ -111,26 +135,5 @@ class RankingActivity : AppCompatActivity() {
         millis -= TimeUnit.MINUTES.toMillis(minutes)
         val seconds = TimeUnit.MILLISECONDS.toSeconds(millis)
         return "$hours 시간 $minutes 분 $seconds 초"
-    }
-
-    private fun loadUsers() {
-        userList = arrayListOf<User>()
-        // 파이어베이스 연동
-        userDB = Firebase.database.reference.child("Users")
-        // DB에 있는 값을 UserList에 담는다
-        userDB.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()){
-                    for (userSnapshot in snapshot.children){
-                        val user = userSnapshot.getValue(User::class.java)
-                        userList.add(user!!)
-                    }
-                }
-            }
-            override fun onCancelled(error: DatabaseError) {
-            }
-        })
-        adapter = UserAdapter(userList)
-        recyclerView.adapter = adapter
     }
 }
