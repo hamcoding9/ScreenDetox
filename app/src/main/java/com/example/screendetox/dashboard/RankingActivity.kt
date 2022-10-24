@@ -138,3 +138,4 @@ class RankingActivity : AppCompatActivity() {
         return "$hours 시간 $minutes 분 $seconds 초"
     }
 }
+// experiement1
