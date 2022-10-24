@@ -46,7 +46,6 @@ class MainActivity : AppCompatActivity() {
             }
             else {
                 startActivity(Intent(this, RankingActivity::class.java))
-                //finish()
             }
         }
         else {

@@ -21,6 +21,7 @@ import com.google.firebase.ktx.Firebase
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 
+// 랭킹 대시보드 Activity
 class RankingActivity : AppCompatActivity() {
     // 로그인 정보
     var auth: FirebaseAuth = FirebaseAuth.getInstance()

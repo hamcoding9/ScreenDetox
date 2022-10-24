@@ -15,6 +15,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 
+// 나의 사용 시간을 보는 Activity
 class StatsActivity : AppCompatActivity() {
     // 뷰 바인딩
     private lateinit var binding: ActivityStatsBinding
@@ -67,7 +68,7 @@ class StatsActivity : AppCompatActivity() {
     }
 
     private fun showAppUsage(appList: List<UsageStats>) {
-        Collections.sort(appList){
+        Collections.sort(appList){ //TODO: Sorting 방식 kotlin스럽게 바꾸기
             z1: UsageStats, z2: UsageStats -> java.lang.Long.compare(
             z1.totalTimeInForeground,
             z2.totalTimeInForeground
