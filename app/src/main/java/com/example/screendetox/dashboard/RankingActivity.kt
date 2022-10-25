@@ -3,6 +3,7 @@ package com.example.screendetox.dashboard
 import android.app.usage.UsageStats
 import android.app.usage.UsageStatsManager
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -80,21 +81,34 @@ class RankingActivity : AppCompatActivity() {
     }
 
     private fun saveAppUsage(appList: MutableList<UsageStats>) {
+        val usageTotaltime = getTotalTime(appList)
+        //val mostUsedCategory = getMostUsedCategory(appList)
+        // DB와 연결
+        var userDB = Firebase.database.reference.child("Users")
+        val userId = getCurrentUserID()
+        val currentUserDB = userDB.child(userId)
+       // DB에 UserInfo 저장하기
+        val user = mutableMapOf<String, Any>()
+        user["userId"] = userId
+        user["totalTime"] = usageTotaltime
+        //user["mostUsedCategory"] = mostusedCategory
+        currentUserDB.updateChildren(user)
+    }
+
+/*
+    private fun getMostUsedCategory(appList: MutableList<UsageStats>): Any {
+        // applist 정렬
+        var appList = appList.sortedBy { it.totalTimeInForeground }
+        //TODO: 함수
+    }
+*/
+
+    private fun getTotalTime(appList: MutableList<UsageStats>): Any {
         // 전체 사용 시간 구하기
         val totalTime = appList.stream().map {obj:UsageStats -> obj.totalTimeInForeground }.mapToLong{obj: Long -> obj}.sum()
         // 전체 사용 시간을 @시간@분@초 형태로 바꾸기
         val usageTotaltime = getDurationBreakdown(totalTime)
-        //
-
-        // 전체 사용 시간(string) DB에 저장하기
-        var userDB = Firebase.database.reference.child("Users")
-        val userId = getCurrentUserID()
-        val currentUserDB = userDB.child(userId)
-        // DB에 업데이트
-        val user = mutableMapOf<String, Any>()
-        user["userId"] = userId
-        user["totalTime"] = usageTotaltime
-        currentUserDB.updateChildren(user)
+        return usageTotaltime
     }
 
     private fun loadUsers() {
@@ -116,6 +130,16 @@ class RankingActivity : AppCompatActivity() {
             override fun onCancelled(error: DatabaseError) {
             }
         })
+    }
+
+    private fun isAppInfoAvailable(usageStats: UsageStats): Boolean {
+        return try{
+            applicationContext.packageManager.getApplicationInfo(usageStats.packageName, 0)
+            true
+        }
+        catch (e: PackageManager.NameNotFoundException){
+            false
+        }
     }
 
     // User ID 가져오는 함수

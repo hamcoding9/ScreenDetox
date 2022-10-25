@@ -79,12 +79,10 @@ class StatsActivity : AppCompatActivity() {
                 var icon = getDrawable(R.drawable.no_image)
                 val packageNames = packageName.split("\\.").toTypedArray()
                 var appName = packageNames[packageNames.size - 1].trim{ it <= ' '}
-                var appcategory : String
                 if (isAppInfoAvailable(usageStats)){
                     val ai = applicationContext.packageManager.getApplicationInfo(packageName, 0)
                     icon = applicationContext.packageManager.getApplicationIcon(ai)
                     appName = applicationContext.packageManager.getApplicationLabel(ai).toString()
-                    //ai.category
                 }
                 val usageDuration = getDurationBreakdown(usageStats.totalTimeInForeground)
                 val usagePercentage = (usageStats.totalTimeInForeground * 100 / totalTime).toInt()
