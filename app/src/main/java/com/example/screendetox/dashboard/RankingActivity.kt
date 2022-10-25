@@ -84,6 +84,8 @@ class RankingActivity : AppCompatActivity() {
         val totalTime = appList.stream().map {obj:UsageStats -> obj.totalTimeInForeground }.mapToLong{obj: Long -> obj}.sum()
         // 전체 사용 시간을 @시간@분@초 형태로 바꾸기
         val usageTotaltime = getDurationBreakdown(totalTime)
+        //
+
         // 전체 사용 시간(string) DB에 저장하기
         var userDB = Firebase.database.reference.child("Users")
         val userId = getCurrentUserID()
@@ -138,4 +140,3 @@ class RankingActivity : AppCompatActivity() {
         return "$hours 시간 $minutes 분 $seconds 초"
     }
 }
-// experiement1

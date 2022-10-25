@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.screendetox.R
 import com.example.screendetox.data.App
 import com.example.screendetox.databinding.ActivityStatsBinding
-import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 
@@ -68,12 +67,7 @@ class StatsActivity : AppCompatActivity() {
     }
 
     private fun showAppUsage(appList: List<UsageStats>) {
-        Collections.sort(appList){ //TODO: Sorting 방식 kotlin스럽게 바꾸기
-            z1: UsageStats, z2: UsageStats -> java.lang.Long.compare(
-            z1.totalTimeInForeground,
-            z2.totalTimeInForeground
-        )}
-
+        var appList = appList.sortedBy { it.totalTimeInForeground }
         // get total time of apps usage to calculate the usagePercentage for each app
         val totalTime = appList.stream().map { obj: UsageStats -> obj.totalTimeInForeground }
             .mapToLong {obj : Long -> obj }.sum()
@@ -85,10 +79,12 @@ class StatsActivity : AppCompatActivity() {
                 var icon = getDrawable(R.drawable.no_image)
                 val packageNames = packageName.split("\\.").toTypedArray()
                 var appName = packageNames[packageNames.size - 1].trim{ it <= ' '}
+                var appcategory : String
                 if (isAppInfoAvailable(usageStats)){
                     val ai = applicationContext.packageManager.getApplicationInfo(packageName, 0)
                     icon = applicationContext.packageManager.getApplicationIcon(ai)
                     appName = applicationContext.packageManager.getApplicationLabel(ai).toString()
+                    //ai.category
                 }
                 val usageDuration = getDurationBreakdown(usageStats.totalTimeInForeground)
                 val usagePercentage = (usageStats.totalTimeInForeground * 100 / totalTime).toInt()

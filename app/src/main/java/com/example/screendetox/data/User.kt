@@ -4,5 +4,6 @@ package com.example.screendetox.data
 // User 한 명이 가지고 있는 정보: userName(식별 이름), usageTotaltime(total 사용 시간)
 data class User (
     var userId: String ?= null,
-    var totalTime: String ?= null
+    var totalTime: String ?= null,
+    //var mostUsedCategory: String ?= null
     )
