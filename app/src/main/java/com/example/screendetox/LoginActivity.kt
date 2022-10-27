@@ -1,30 +1,32 @@
 package com.example.screendetox
 
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import com.example.screendetox.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 class LoginActivity:AppCompatActivity() {
+    // 인증 정보
     private lateinit var auth: FirebaseAuth
+    // 바인딩
+    private lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         auth = Firebase.auth
 
-        //TODO: view binding 방식으로 변경
-        val emailEditText = findViewById<EditText>(R.id.emailEditText)
-        val passwordEditText = findViewById<EditText>(R.id.passwordEditText)
-        val loginButton = findViewById<Button>(R.id.loginButton)
-        val signUpButton = findViewById<Button>(R.id.signUpButton)
+        val emailEditText = binding.emailEditText
+        val passwordEditText = binding.passwordEditText
+        val loginButton = binding.loginButton
+        val signUpButton = binding.signUpButton
 
         loginButton.setOnClickListener{
             val email = emailEditText.text.toString()
@@ -33,7 +35,7 @@ class LoginActivity:AppCompatActivity() {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful){
-                        successLogin()
+                        saveUserLoginInfo()
                     } else {
                       Toast.makeText(
                           this,
@@ -77,8 +79,7 @@ class LoginActivity:AppCompatActivity() {
         }
     }
     // DB에 User Id 정보 저장하기
-    // TODO: 함수 이름 변경 (saveUserLoginInfo)
-    private fun successLogin() {
+    private fun saveUserLoginInfo() {
         if (auth.currentUser == null) {
             Toast.makeText(this, "로그인에 실패했습니다. 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
             return
