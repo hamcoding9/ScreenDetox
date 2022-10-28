@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.screendetox.R
@@ -124,7 +125,12 @@ class RankingActivity : AppCompatActivity() {
                         userList.add(user!!)
                     }
                     adapter = UserAdapter(userList)
+
                     recyclerView.adapter = adapter
+
+                    // user간 구분선 추가
+                    val decoration = DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL)
+                    recyclerView.addItemDecoration(decoration)
                 }
             }
             override fun onCancelled(error: DatabaseError) {

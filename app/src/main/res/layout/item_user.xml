@@ -4,17 +4,20 @@
     android:layout_height="wrap_content"
     android:padding="20dp">
 
-<!--    <ImageView-->
-<!--        android:id="@+id/profile_image"-->
-<!--        android:layout_width="70dp"-->
-<!--        android:layout_height="70dp"-->
-<!--        android:adjustViewBounds="true"-->
-<!--        android:scaleType="centerCrop"/>-->
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src = "@drawable/basic_profile"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingLeft="20dp">
+
         <TextView
             android:id="@+id/nameTv"
             android:textSize="25dp"
