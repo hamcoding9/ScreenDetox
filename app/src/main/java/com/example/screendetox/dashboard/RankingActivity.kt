@@ -120,12 +120,14 @@ class RankingActivity : AppCompatActivity() {
         userDB.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()){
+                    userList.clear()
                     for (userSnapshot in snapshot.children){
                         val user = userSnapshot.getValue(User::class.java)
                         userList.add(user!!)
                     }
-                    adapter = UserAdapter(userList)
+                    adapter = UserAdapter()
                     recyclerView.adapter = adapter
+                    adapter.submitList(userList)
                     // user간 구분선 추가
                     val decoration = DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL)
                     recyclerView.addItemDecoration(decoration)

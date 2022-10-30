@@ -90,6 +90,7 @@ class StatsActivity : AppCompatActivity() {
                 appsList.add(usageStatDTO)
             } catch (e: PackageManager.NameNotFoundException){
                 e.printStackTrace()
+
             }
         }
         // reverse the list to get most usage first
