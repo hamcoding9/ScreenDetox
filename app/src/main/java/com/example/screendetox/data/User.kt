@@ -5,5 +5,5 @@ package com.example.screendetox.data
 data class User (
     var userId: String ?= null,
     var totalTime: String ?= null,
-    //var mostUsedCategory: String ?= null
+    var mostUsedApp: String ?= null
     )

@@ -83,7 +83,7 @@ class RankingActivity : AppCompatActivity() {
 
     private fun saveAppUsage(appList: MutableList<UsageStats>) {
         val usageTotaltime = getTotalTime(appList)
-        //val mostUsedCategory = getMostUsedCategory(appList)
+        val mostUsedApp = getMostUsedApp(appList)
         // DB와 연결
         var userDB = Firebase.database.reference.child("Users")
         val userId = getCurrentUserID()
@@ -92,19 +92,18 @@ class RankingActivity : AppCompatActivity() {
         val user = mutableMapOf<String, Any>()
         user["userId"] = userId
         user["totalTime"] = usageTotaltime
-        //user["mostUsedCategory"] = mostusedCategory
+        user["mostUsedApp"] = mostUsedApp
         currentUserDB.updateChildren(user)
     }
 
-/*
-    private fun getMostUsedCategory(appList: MutableList<UsageStats>): Any {
-        // applist 정렬
+    private fun getMostUsedApp(appList: MutableList<UsageStats>): String {
         var appList = appList.sortedBy { it.totalTimeInForeground }
-        //TODO: 함수
+        val mostAppStats = appList[0]
+        val packageName = mostAppStats.packageName
+        return packageName
     }
-*/
 
-    private fun getTotalTime(appList: MutableList<UsageStats>): Any {
+    private fun getTotalTime(appList: MutableList<UsageStats>): String {
         // 전체 사용 시간 구하기
         val totalTime = appList.stream().map {obj:UsageStats -> obj.totalTimeInForeground }.mapToLong{obj: Long -> obj}.sum()
         // 전체 사용 시간을 @시간@분@초 형태로 바꾸기
@@ -125,7 +124,6 @@ class RankingActivity : AppCompatActivity() {
                         userList.add(user!!)
                     }
                     adapter = UserAdapter(userList)
-
                     recyclerView.adapter = adapter
 
                     // user간 구분선 추가

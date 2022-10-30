@@ -1,5 +1,6 @@
 package com.example.screendetox.dashboard
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,15 @@ class UserAdapter(private val userList : ArrayList<User>) : RecyclerView.Adapter
         val currentItem = userList[position]
         holder.userName.text = currentItem.userId
         holder.durationTime.text = currentItem.totalTime
+
+        // UserList에서 Item을 누르면 FriendDetailActivity 실행
+        holder.itemView.setOnClickListener {
+            Intent(holder.itemView.context, FriendDetailActivity::class.java).apply{
+                putExtra("userID", currentItem.userId)
+                putExtra("userTotalTime", currentItem.totalTime)
+                putExtra("userMostUsedApp", currentItem.mostUsedApp)
+            }.run { holder.itemView.context.startActivity(this) }
+        }
     }
 
     override fun getItemCount(): Int {
