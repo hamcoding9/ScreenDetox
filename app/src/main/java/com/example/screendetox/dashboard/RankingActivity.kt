@@ -98,9 +98,10 @@ class RankingActivity : AppCompatActivity() {
 
     private fun getMostUsedApp(appList: MutableList<UsageStats>): String {
         var appList = appList.sortedBy { it.totalTimeInForeground }
-        val mostAppStats = appList[0]
+        val mostAppStats = appList.last()
         val packageName = mostAppStats.packageName
-        return packageName
+        val appName = packageName.split(".").last()
+        return appName
     }
 
     private fun getTotalTime(appList: MutableList<UsageStats>): String {
@@ -125,7 +126,6 @@ class RankingActivity : AppCompatActivity() {
                     }
                     adapter = UserAdapter(userList)
                     recyclerView.adapter = adapter
-
                     // user간 구분선 추가
                     val decoration = DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL)
                     recyclerView.addItemDecoration(decoration)
