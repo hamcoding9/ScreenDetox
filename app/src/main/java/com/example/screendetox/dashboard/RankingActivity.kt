@@ -5,6 +5,7 @@ import android.app.usage.UsageStatsManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -69,9 +70,11 @@ class RankingActivity : AppCompatActivity() {
 
     private fun loadStatistics() {
         val usm = this.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
+        val midnight : Long = (System.currentTimeMillis() / 86400000) * 86400000 - (9 * 3600000)
+        // 오늘 0시를 기준으로 현재까지의 사용 통계 받아오기
         var appList = usm.queryUsageStats(
             UsageStatsManager.INTERVAL_DAILY,
-            System.currentTimeMillis() - 1000 * 2600 * 24,
+            midnight,
             System.currentTimeMillis())
         // 지난 24시간 동안 사용한 어플리케이션(사용 시간 > 0인 것만 filter)만 불러오기
         // totalTimeInForeground: Get the total time this package spent in the foreground, measured in milliseconds.
@@ -88,6 +91,7 @@ class RankingActivity : AppCompatActivity() {
         var userDB = Firebase.database.reference.child("Users")
         val userId = getCurrentUserID()
         val currentUserDB = userDB.child(userId)
+        Log.i("totalTime", "The total time today is $usageTotaltime")
        // DB에 UserInfo 저장하기
         val user = mutableMapOf<String, Any>()
         user["userId"] = userId
