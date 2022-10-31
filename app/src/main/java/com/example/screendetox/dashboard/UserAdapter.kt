@@ -3,26 +3,43 @@ package com.example.screendetox.dashboard
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.screendetox.R
 import com.example.screendetox.data.User
 import com.example.screendetox.databinding.ItemUserBinding
+import java.util.concurrent.TimeUnit
 
 class UserAdapter : ListAdapter<User, UserAdapter.ViewHolder>(diffUtil){
     inner class ViewHolder(var binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root){
         fun bind(item: User){
             binding.nameTv.text = item.userId
-            binding.durationTv.text = item.totalTime
+            binding.durationTv.text = getDurationBreakdown(item.totalTime)
+
+            //totalTime이 goalTime(현재는 default: 3Hours) 넘었으면 색 바꾸기
+            if (item.totalTime!! > 3 * 3600000){
+                binding.durationTv.setTextColor(ContextCompat.getColor(itemView.context, R.color.red))
+            }
 
             itemView.setOnClickListener {
                 Intent(itemView.context, FriendDetailActivity::class.java).apply {
                     putExtra("userID", item.userId)
-                    putExtra("userTotalTime", item.totalTime)
+                    putExtra("userTotalTime", getDurationBreakdown(item.totalTime))
                     putExtra("userMostUsedApp", item.mostUsedApp)
                 }.run { itemView.context.startActivity(this) }
             }
         }
+    }
+
+    private fun getDurationBreakdown(millis:Long?): String{
+        var millis = millis!!
+        require(millis >= 0) { " Duration must be greater than zero! "}
+        val hours = TimeUnit.MILLISECONDS.toHours(millis)
+        millis -= TimeUnit.HOURS.toMillis(hours)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(millis)
+        return "$hours 시간 $minutes 분"
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -55,40 +72,3 @@ class UserAdapter : ListAdapter<User, UserAdapter.ViewHolder>(diffUtil){
         return currentList.size
     }
 }
-
-/*class UserAdapter(private val userList: ArrayList<User>) :
-    RecyclerView.Adapter<UserAdapter.UserItemViewHolder>() {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserItemViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(
-            R.layout.item_user,
-            parent, false
-        )
-        return UserItemViewHolder(itemView)
-    }
-
-    override fun onBindViewHolder(holder: UserItemViewHolder, position: Int) {
-        val currentItem = userList[position]
-        holder.userName.text = currentItem.userId
-        holder.durationTime.text = currentItem.totalTime
-
-        // UserList에서 Item을 누르면 FriendDetailActivity 실행
-        holder.itemView.setOnClickListener {
-            Intent(holder.itemView.context, FriendDetailActivity::class.java).apply {
-                putExtra("userID", currentItem.userId)
-                putExtra("userTotalTime", currentItem.totalTime)
-                putExtra("userMostUsedApp", currentItem.mostUsedApp)
-            }.run { holder.itemView.context.startActivity(this) }
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return userList.size
-    }
-
-    class UserItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val userName: TextView = itemView.findViewById(R.id.nameTv)
-        val durationTime: TextView = itemView.findViewById(R.id.durationTv)
-    }
-}*/
-

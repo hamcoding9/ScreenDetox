@@ -5,8 +5,9 @@ import android.app.usage.UsageStatsManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -60,12 +61,23 @@ class RankingActivity : AppCompatActivity() {
         }
         recyclerView = binding.usersRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
-    }
 
-    override fun onStart(){
-        super.onStart()
-        loadStatistics()
-        loadUsers()
+        // 초기 설정 : 닉네임, 목표
+        userDB = Firebase.database.reference.child("Users")
+        val currentUserDB = userDB.child(getCurrentUserID())
+
+        // 닉네임 및 목표 시간 설정
+        currentUserDB.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.child("userName").value == null) {
+                    showNameInputPopup()
+                    return
+                }
+                loadStatistics()
+                loadUsers()
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
     private fun loadStatistics() {
@@ -80,7 +92,7 @@ class RankingActivity : AppCompatActivity() {
         // totalTimeInForeground: Get the total time this package spent in the foreground, measured in milliseconds.
         appList = appList.stream().filter{ app: UsageStats -> app.totalTimeInForeground > 0}
             .collect(Collectors.toList())
-        // 내 사용 기록 불러 왔으니 나의 사용 시간을 DB에 업데이트
+        // 내 사용 기록 불러 왔으니 나의 사용 기록을 DB에 업데이트
         saveAppUsage(appList)
     }
 
@@ -91,7 +103,6 @@ class RankingActivity : AppCompatActivity() {
         var userDB = Firebase.database.reference.child("Users")
         val userId = getCurrentUserID()
         val currentUserDB = userDB.child(userId)
-        Log.i("totalTime", "The total time today is $usageTotaltime")
        // DB에 UserInfo 저장하기
         val user = mutableMapOf<String, Any>()
         user["userId"] = userId
@@ -108,12 +119,11 @@ class RankingActivity : AppCompatActivity() {
         return appName
     }
 
-    private fun getTotalTime(appList: MutableList<UsageStats>): String {
+    private fun getTotalTime(appList: MutableList<UsageStats>): Long {
         // 전체 사용 시간 구하기
         val totalTime = appList.stream().map {obj:UsageStats -> obj.totalTimeInForeground }.mapToLong{obj: Long -> obj}.sum()
         // 전체 사용 시간을 @시간@분@초 형태로 바꾸기
-        val usageTotaltime = getDurationBreakdown(totalTime)
-        return usageTotaltime
+        return totalTime
     }
 
     private fun loadUsers() {
@@ -169,8 +179,57 @@ class RankingActivity : AppCompatActivity() {
         val hours = TimeUnit.MILLISECONDS.toHours(millis)
         millis -= TimeUnit.HOURS.toMillis(hours)
         val minutes = TimeUnit.MILLISECONDS.toMinutes(millis)
-        millis -= TimeUnit.MINUTES.toMillis(minutes)
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(millis)
-        return "$hours 시간 $minutes 분 $seconds 초"
+        return "$hours 시간 $minutes 분"
+    }
+
+    private fun showNameInputPopup() {
+        val editText = EditText(this)
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.write_name))
+            .setView(editText)
+            .setPositiveButton("저장") { _, _ ->
+                if (editText.text.isEmpty()) {
+                    showNameInputPopup()
+                } else {
+                    saveUserName(editText.text.toString())
+                }
+            }
+            .setCancelable(false)
+            .show()
+    }
+
+/*    private fun showGoalInputPopup() {
+        val editText = EditText(this)
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.write_goal))
+            .setView(editText)
+            .setPositiveButton("저장") { _, _ ->
+                if (editText.text.isEmpty()) {
+                    showNameInputPopup()
+                } else {
+                    saveGoalTime(editText.text.toString())
+                }
+            }
+            .setCancelable(false)
+            .show()
+    }*/
+
+    private fun saveUserName(name: String) {
+        val userId = getCurrentUserID()
+        val currentUserDB = userDB.child(userId)
+        val user = mutableMapOf<String, Any>()
+        user["userId"] = userId
+        user["userName"] = name
+        currentUserDB.updateChildren(user)
+    }
+
+    private fun saveGoalTime(goal: String) {
+        val userId = getCurrentUserID()
+        val currentUserDB = userDB.child(userId)
+        val user = mutableMapOf<String, Any>()
+        user["userId"] = userId
+        user["goalTime"] = goal.toLong()
+        currentUserDB.updateChildren(user)
     }
 }
+
