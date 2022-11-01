@@ -22,6 +22,8 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 
@@ -73,6 +75,7 @@ class RankingActivity : AppCompatActivity() {
                     showNameInputPopup()
                     return
                 }
+                loadTodayDate()
                 loadStatistics()
                 loadUsers()
             }
@@ -80,6 +83,12 @@ class RankingActivity : AppCompatActivity() {
         })
     }
 
+    private fun loadTodayDate() {
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val formatted = current.format(formatter)
+        binding.rankingDateTv.text = formatted
+    }
     private fun loadStatistics() {
         val usm = this.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
         val midnight : Long = (System.currentTimeMillis() / 86400000) * 86400000 - (9 * 3600000)
