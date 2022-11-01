@@ -3,6 +3,5 @@
     <string name="permission">사용자 권한 허용을 해주세요</string>
     <string name="write_name">이름을 적어주세요</string>
     <string name="write_goal">목표 시간을 적어주세요(시간 단위만 가능합니다.)</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="rankingHeaderText">RANKING BOARD</string>
 </resources>

@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
 class UserAdapter : ListAdapter<User, UserAdapter.ViewHolder>(diffUtil){
     inner class ViewHolder(var binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root){
         fun bind(item: User){
-            binding.nameTv.text = item.userId
+            binding.nameTv.text = item.userName
             binding.durationTv.text = getDurationBreakdown(item.totalTime)
 
             //totalTime이 goalTime(현재는 default: 3Hours) 넘었으면 색 바꾸기
@@ -25,7 +25,7 @@ class UserAdapter : ListAdapter<User, UserAdapter.ViewHolder>(diffUtil){
 
             itemView.setOnClickListener {
                 Intent(itemView.context, FriendDetailActivity::class.java).apply {
-                    putExtra("userID", item.userId)
+                    putExtra("userID", item.userName)
                     putExtra("userTotalTime", getDurationBreakdown(item.totalTime))
                     putExtra("userMostUsedApp", item.mostUsedApp)
                 }.run { itemView.context.startActivity(this) }
