@@ -23,7 +23,7 @@ class AppsAdapter(private val appsList : ArrayList<App>) : RecyclerView.Adapter<
         holder.app_name.text = currentItem.appName
         holder.app_icon_img.setImageDrawable(currentItem.appIcon)
         holder.app_usage_duration.text = currentItem.usageDuration
-        holder.app_usage_perc.text = currentItem.usagePercentage.toString() + "%"
+        //holder.app_usage_perc.text = currentItem.usagePercentage.toString() + "%"
         holder.app_progressBar.progress = currentItem.usagePercentage
     }
 
@@ -34,7 +34,7 @@ class AppsAdapter(private val appsList : ArrayList<App>) : RecyclerView.Adapter<
     class AppViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val app_name : TextView = itemView.findViewById(R.id.app_name_tv)
         val app_usage_duration : TextView = itemView.findViewById(R.id.usage_duration_tv)
-        val app_usage_perc : TextView = itemView.findViewById(R.id.usage_perc_tv)
+        //val app_usage_perc : TextView = itemView.findViewById(R.id.usage_perc_tv)
         val app_icon_img : ImageView = itemView.findViewById(R.id.icon_img)
         val app_progressBar : ProgressBar = itemView.findViewById(R.id.progressBar)
     }

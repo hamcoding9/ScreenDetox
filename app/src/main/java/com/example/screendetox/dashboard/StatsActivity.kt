@@ -91,7 +91,6 @@ class StatsActivity : AppCompatActivity() {
                 appsList.add(usageStatDTO)
             } catch (e: PackageManager.NameNotFoundException){
                 e.printStackTrace()
-
             }
         }
         // reverse the list to get most usage first
@@ -116,8 +115,6 @@ class StatsActivity : AppCompatActivity() {
         val hours = TimeUnit.MILLISECONDS.toHours(millis)
         millis -= TimeUnit.HOURS.toMillis(hours)
         val minutes = TimeUnit.MILLISECONDS.toMinutes(millis)
-        millis -= TimeUnit.MINUTES.toMillis(minutes)
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(millis)
-        return "$hours h $minutes m $seconds s"
+        return "$hours 시간 $minutes 분"
     }
 }

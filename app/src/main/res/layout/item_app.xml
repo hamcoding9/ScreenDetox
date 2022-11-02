@@ -56,13 +56,13 @@
                 android:progressBackgroundTint="#b9b9ba"
                 android:progressTint="#4285f4" />
 
-            <TextView
+<!--            <TextView
                 android:id="@+id/usage_perc_tv"
                 android:layout_width="30dp"
                 android:layout_height="wrap_content"
                 android:text="30%"
                 android:textAlignment="textEnd"
-                android:textStyle="italic" />
+                android:textStyle="italic" />-->
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
