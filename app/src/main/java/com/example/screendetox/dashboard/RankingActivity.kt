@@ -64,7 +64,7 @@ class RankingActivity : AppCompatActivity() {
         recyclerView = binding.usersRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // 초기 설정 : 닉네임, 목표
+        // 초기 설정 : 닉네임
         userDB = Firebase.database.reference.child("Users")
         val currentUserDB = userDB.child(getCurrentUserID())
 
@@ -75,12 +75,12 @@ class RankingActivity : AppCompatActivity() {
                     showNameInputPopup()
                     return
                 }
-                loadTodayDate()
-                loadStatistics()
-                loadUsers()
             }
             override fun onCancelled(error: DatabaseError) {}
         })
+        loadTodayDate()
+        loadStatistics()
+        loadUsers()
     }
 
     private fun loadTodayDate() {
@@ -89,6 +89,7 @@ class RankingActivity : AppCompatActivity() {
         val formatted = current.format(formatter)
         binding.rankingDateTv.text = formatted
     }
+
     private fun loadStatistics() {
         val usm = this.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
         val midnight : Long = (System.currentTimeMillis() / 86400000) * 86400000 - (9 * 3600000)
