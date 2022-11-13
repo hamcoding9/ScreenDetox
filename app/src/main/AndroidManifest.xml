@@ -17,6 +17,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ScreenDetox"
         tools:targetApi="31">
+        <service
+            android:name=".SaveService"
+            android:enabled="true"
+            android:exported="true"></service>
+
         <activity
             android:name=".dashboard.FriendDetailActivity"
             android:exported="false">
@@ -52,7 +57,12 @@
                 android:value="" />
         </activity>
         <activity android:name=".LoginActivity" />
-        <activity android:name=".dashboard.BoardActivity" />
+
+        <service
+            android:name=".service.SaveService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>
