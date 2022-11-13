@@ -17,7 +17,6 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.screendetox.dashboard.RankingActivity
-import com.example.screendetox.service.SaveService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -43,14 +42,13 @@ class MainActivity : AppCompatActivity() {
         val componentName = ComponentName(this, SaveService::class.java)
         val info = JobInfo.Builder(1, componentName)
             .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
-            .setPersisted(true)
-            .setPeriodic(DateUtils.MINUTE_IN_MILLIS * 5) // 5분마다 반복적
+            .setPeriodic(DateUtils.MINUTE_IN_MILLIS * 30) // 30분마다 반복적
             .build()
         val jobScheduler: JobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
         val resultCode = jobScheduler.schedule(info)
 
         val isJobScheduledSuccess = resultCode == JobScheduler.RESULT_SUCCESS
-        Log.d("MainActivity", "Job Scheduled ${if (isJobScheduledSuccess) "SUCCESS" else "FAILED"}")
+        Log.d("SaveService", "Job Scheduled ${if (isJobScheduledSuccess) "SUCCESS" else "FAILED"}")
     }
 
     // 1. 어플을 처음 실행시켰을 때, permission 되어 있지 않으면 user permission setting 화면으로 넘어감
