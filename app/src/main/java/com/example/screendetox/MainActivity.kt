@@ -2,15 +2,22 @@ package com.example.screendetox
 
 import android.Manifest
 import android.app.AppOpsManager
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
+import android.text.format.DateUtils
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.screendetox.dashboard.RankingActivity
+import com.example.screendetox.service.SaveService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -29,6 +36,21 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         enableBtn = findViewById(R.id.enable_btn) // permission enable 버튼
         permissionTv = findViewById(R.id.permission_tv) // permission text
+        scheduleJob()
+    }
+
+    private fun scheduleJob() {
+        val componentName = ComponentName(this, SaveService::class.java)
+        val info = JobInfo.Builder(1, componentName)
+            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+            .setPersisted(true)
+            .setPeriodic(DateUtils.MINUTE_IN_MILLIS * 5) // 5분마다 반복적
+            .build()
+        val jobScheduler: JobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        val resultCode = jobScheduler.schedule(info)
+
+        val isJobScheduledSuccess = resultCode == JobScheduler.RESULT_SUCCESS
+        Log.d("MainActivity", "Job Scheduled ${if (isJobScheduledSuccess) "SUCCESS" else "FAILED"}")
     }
 
     // 1. 어플을 처음 실행시켰을 때, permission 되어 있지 않으면 user permission setting 화면으로 넘어감
