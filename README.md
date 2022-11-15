@@ -10,7 +10,7 @@ ScreenDetox는 친구들과 함께하는 스마트폰 중독 방지 애플리케
 
 * 랭킹 탭에서 친구들의 스마트폰 사용 시간을 확인할 수 있습니다. 친구의 스마트폰 사용 시간이 목표 시간을 넘으면 빨간색으로 표시됩니다. 친구를 누르면 친구가 가장 많이 사용하는 어플리케이션을 알 수 있습니다.
 
-<center><img src="./screenshots/ranking.gif" width="50%" height="50%"></center>
+<center><img src="./screenshots/ranking.gif" width="25%" height="25%"></center>
 
 * 다른 기기에서 접속 시 해당 기기의 스마트폰 사용 시간이 업데이트됩니다.
 
