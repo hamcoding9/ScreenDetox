@@ -40,10 +40,10 @@
         android:id="@+id/rankingDateTv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="25dp"
+        android:textSize="17dp"
+        android:text="1970-01-01"
         android:textColor="@color/black"
         android:gravity="center"
-        android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/rankingHeader"
         android:layout_marginTop="5dp"/>
 

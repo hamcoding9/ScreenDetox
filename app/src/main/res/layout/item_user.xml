@@ -6,17 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="100dp">
 
-    <ImageView
-        android:id="@+id/profile_image"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/basic_profile"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="20dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="15dp"
-        />
+<!--    <ImageView-->
+<!--        android:id="@+id/profile_image"-->
+<!--        android:layout_width="70dp"-->
+<!--        android:layout_height="70dp"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        android:src="@drawable/basic_profile"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        android:layout_marginLeft="20dp"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        android:layout_marginTop="15dp"-->
+<!--        />-->
 
     <TextView
         android:id="@+id/nameTv"
@@ -25,8 +25,8 @@
         android:text="사용자"
         android:textSize="20dp"
         android:textColor="@color/black"
-        app:layout_constraintLeft_toRightOf="@id/profile_image"
-        android:layout_marginLeft="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="20dp"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="35dp"/>
 
@@ -35,7 +35,7 @@
         android:layout_width="0dp"
         android:layout_height="55dp"
         android:text="3시간 40분"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="bold"
         android:textColor="@color/primaryBlue"
         app:layout_constraintRight_toRightOf="parent"
