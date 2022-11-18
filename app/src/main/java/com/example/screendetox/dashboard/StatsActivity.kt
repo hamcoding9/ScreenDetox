@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.screendetox.R
 import com.example.screendetox.data.App
 import com.example.screendetox.databinding.ActivityStatsBinding
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 
@@ -45,11 +47,19 @@ class StatsActivity : AppCompatActivity() {
         }
         recyclerView = binding.appsRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
+        loadTodayDate()
     }
 
     override fun onStart(){
        super.onStart()
        loadStatistics()
+    }
+
+    private fun loadTodayDate() {
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val formatted = current.format(formatter)
+        binding.statsDateTv.text = formatted
     }
 
     private fun loadStatistics() {
@@ -72,7 +82,7 @@ class StatsActivity : AppCompatActivity() {
         // get total time of apps usage to calculate the usagePercentage for each app
         val totalTime = appList.stream().map { obj: UsageStats -> obj.totalTimeInForeground }
             .mapToLong {obj : Long -> obj }.sum()
-
+        binding.statsUserDuration.text = getDurationBreakdown(totalTime)
         // fill the appsList
         for (usageStats in appList){
             try {

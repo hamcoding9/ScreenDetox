@@ -1,24 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context = ".dashboard.StatsActivity">
+    android:background="@color/colorBackgound"
+    tools:context=".dashboard.StatsActivity">
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:backgroundTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_navibar" />
+
+    <View
+        android:id="@+id/statsHeader"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/primaryBlue"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/statsDateTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="17dp"
+        android:text="1970-01-01"
+        android:textColor="@color/white"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="5dp"/>
+
+    <TextView
+        android:id="@+id/statsUserDuration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="30dp"
+        android:text="3시간 30분"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/statsDateTv"
+        android:layout_marginTop="12dp"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/appsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        tools:listitem="@layout/item_app" />
+        app:layout_constraintTop_toBottomOf="@id/statsHeader"
+        tools:listitem="@layout/item_app"/>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_height="60dp"
-        app:menu="@menu/bottom_navibar"/>
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

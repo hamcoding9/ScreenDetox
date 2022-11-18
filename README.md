@@ -1,6 +1,9 @@
 # :mobile_phone_off:ScreenDetox
 ScreenDetox는 친구들과 함께하는 스마트폰 중독 방지 애플리케이션입니다. 목표 사용 시간을 설정하고 친구들과 함께 스마트폰 사용 시간을 줄여 보세요.
 
+<center><img src="./screenshots/screenshots.png" width="90%" height="90%"></center>
+
+
 ## About
 
 * 2022년 2학기 경희대학교 소프트웨어융합캡스톤디자인
