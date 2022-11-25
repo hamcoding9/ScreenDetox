@@ -5,6 +5,7 @@ import android.app.usage.UsageStatsManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -92,9 +93,11 @@ class RankingActivity : AppCompatActivity() {
     private fun loadStatistics() {
         val usm = this.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
         val midnight : Long = (System.currentTimeMillis() / 86400000) * 86400000 - (9 * 3600000)
+        Log.i("timeStamp", "${midnight}")
+        Log.i("timeStamp", "${System.currentTimeMillis()}")
         // 오늘 0시를 기준으로 현재까지의 사용 통계 받아오기
         var appList = usm.queryUsageStats(
-            UsageStatsManager.INTERVAL_DAILY,
+            UsageStatsManager.INTERVAL_BEST,
             midnight,
             System.currentTimeMillis())
         // 지난 24시간 동안 사용한 어플리케이션(사용 시간 > 0인 것만 filter)만 불러오기
