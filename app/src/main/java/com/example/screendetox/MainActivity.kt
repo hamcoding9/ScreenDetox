@@ -1,13 +1,14 @@
 package com.example.screendetox
 
 import android.Manifest
-import android.app.AppOpsManager
+import android.app.*
 import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.format.DateUtils
@@ -20,6 +21,7 @@ import com.example.screendetox.dashboard.RankingActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,6 +31,9 @@ class MainActivity : AppCompatActivity() {
 
     // 로그인 정보
     private val auth: FirebaseAuth = Firebase.auth
+    // alarmreceiver
+    private lateinit var alarmManager : AlarmManager
+    private lateinit var pendingIntent: PendingIntent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,13 +41,48 @@ class MainActivity : AppCompatActivity() {
         enableBtn = findViewById(R.id.enable_btn) // permission enable 버튼
         permissionTv = findViewById(R.id.permission_tv) // permission text
         scheduleJob()
+        createNotificationChannel()
+        setAlarm()
+    }
+
+    private fun setAlarm() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+            val intent = Intent(this, AlarmReceiver::class.java)
+            pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+            val calendar: Calendar = Calendar.getInstance().apply {
+                timeInMillis = System.currentTimeMillis()
+                set(Calendar.HOUR_OF_DAY, 21)
+            }
+
+            alarmManager.setRepeating(
+                AlarmManager.RTC_WAKEUP,
+                calendar.timeInMillis,
+                //1000 * 60 * 20, // This is for test
+                AlarmManager.INTERVAL_DAY,
+                pendingIntent
+            )
+        }
+    }
+
+    private fun createNotificationChannel() {
+        val name : CharSequence = "screendetoxReminderChannel"
+        val description = "Channel for Alarm Manager"
+        val importance = NotificationManager.IMPORTANCE_HIGH
+        val channel = NotificationChannel("screendetox", name, importance)
+        channel.description = description
+        val notificationManager = getSystemService(
+            NotificationManager::class.java
+        )
+        notificationManager.createNotificationChannel(channel)
     }
 
     private fun scheduleJob() {
         val componentName = ComponentName(this, SaveService::class.java)
         val info = JobInfo.Builder(1, componentName)
             .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
-            .setPeriodic(DateUtils.MINUTE_IN_MILLIS * 30) // 30분마다 반복적
+            .setPeriodic(DateUtils.MINUTE_IN_MILLIS * 5) // 30분마다 반복적
             .build()
         val jobScheduler: JobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
         val resultCode = jobScheduler.schedule(info)
