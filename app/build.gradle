@@ -48,6 +48,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-database-ktx:'
+    implementation 'com.google.firebase:firebase-messaging-ktx'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.2'
     implementation 'androidx.work:work-runtime-ktx:2.7.1'
 }
