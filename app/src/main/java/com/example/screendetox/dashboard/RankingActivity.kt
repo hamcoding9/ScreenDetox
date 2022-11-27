@@ -64,6 +64,11 @@ class RankingActivity : AppCompatActivity() {
         recyclerView = binding.usersRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        // 친구 추가 화면으로 이동
+        binding.friendAddBtn.setOnClickListener {
+            startActivity(Intent(this, FriendAddActivity::class.java))
+        }
+
         // 초기 설정 : 닉네임
         userDB = Firebase.database.reference.child("Users")
         val currentUserDB = userDB.child(getCurrentUserID())
