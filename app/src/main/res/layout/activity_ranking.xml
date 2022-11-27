@@ -24,6 +24,17 @@
         android:id="@+id/rankingHeader"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageButton
+        android:id="@+id/friendAddBtn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintRight_toRightOf="@id/rankingHeader"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_baseline_person_add_24"
+        app:tint="@color/white"
+        />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
