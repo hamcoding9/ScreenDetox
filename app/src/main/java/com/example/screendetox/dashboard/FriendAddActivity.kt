@@ -74,6 +74,7 @@ class FriendAddActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     userList.clear()
+                    tempList.clear()
                     for (userSnapshot in snapshot.children) {
                         val user = userSnapshot.getValue(User::class.java)
                         userList.add(user!!)
