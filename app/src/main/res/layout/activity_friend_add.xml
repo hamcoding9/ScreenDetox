@@ -13,7 +13,7 @@
        android:background="@color/primaryBlue"
        app:layout_constraintTop_toTopOf="parent" />
 
-   <EditText
+   <SearchView
        android:id="@+id/inputFriendname"
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
        android:textColor="@color/black"
        android:textSize="20sp"
        android:background="@color/white">
-   </EditText>
+   </SearchView>
 
 <!--   <androidx.appcompat.widget.SearchView
        android:id="@+id/friendSearchView"
