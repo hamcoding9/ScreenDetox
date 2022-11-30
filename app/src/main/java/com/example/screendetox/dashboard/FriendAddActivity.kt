@@ -3,6 +3,7 @@ package com.example.screendetox.dashboard
 import android.os.Bundle
 import android.util.Log
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -36,7 +37,7 @@ class FriendAddActivity : AppCompatActivity() {
         loadUserList()
         Log.i("userlist", userList.size.toString())
         tempList.addAll(userList)
-        adapter = RequestAdapter(tempList)
+        adapter = RequestAdapter(tempList, followUser)
         recyclerView.adapter = adapter
 
         binding.inputFriendname.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -72,7 +73,7 @@ class FriendAddActivity : AppCompatActivity() {
         userDB.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    //userList.clear()
+                    userList.clear()
                     for (userSnapshot in snapshot.children) {
                         val user = userSnapshot.getValue(User::class.java)
                         userList.add(user!!)
@@ -80,7 +81,7 @@ class FriendAddActivity : AppCompatActivity() {
                 }
                 Log.i("userList size", userList.size.toString())
                 tempList.addAll(userList)
-                adapter = RequestAdapter(tempList)
+                adapter = RequestAdapter(tempList, followUser)
                 recyclerView.adapter = adapter
             }
             override fun onCancelled(error: DatabaseError) {
@@ -93,51 +94,19 @@ class FriendAddActivity : AppCompatActivity() {
         }
         return SaveService.auth.currentUser?.uid.orEmpty()
     }
-}
 
-/*    private fun requestUser(query: String) {
-        val userDB = Firebase.database.reference.child("Users")
-        val userMap = loadUserList()
-        if (query in userMap.values) {
-            val friendId = userMap.filterValues { it == query }.keys.first()
-            Log.i("friendAdd", "입력한 친구 닉네임: ${query}")
-            Log.i("friendAdd", "입력한 친구 UID: ${friendId}")
-            userDB.child(friendId!!)
-                .child("requestedBy")
-                .child("pending")
-                .child(getCurrentUserID())
+    // follow 버튼에 달 click listener 람다 함수
+    val followUser: (User) -> Unit = { user ->
+        if (user.userId != getCurrentUserID()) {
+            Log.i("friend add", "${user.userName!!}에게 친구 추가")
+            userDB = Firebase.database.reference.child("Users")
+            userDB.child(getCurrentUserID())
+                .child("following")
+                .child(user.userId!!)
                 .setValue(true)
-            Toast.makeText(this@FriendAddActivity, "친구 요청을 완료했습니다", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@FriendAddActivity, "친구 추가를 완료했습니다", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this@FriendAddActivity, "자기 자신은 친구 추가 할 수 없습니다", Toast.LENGTH_SHORT).show()
         }
-        else {
-            Toast.makeText(this@FriendAddActivity, "검색어를 확인해주세요", Toast.LENGTH_SHORT).show()
-        }
-    }*/
-
-
-
-/*        binding.followBtn.setOnClickListener {
-            Log.i("friendAdd", "친구요청 클릭")
-            Toast.makeText(this@FriendAddActivity, "친구 요청 클릭", Toast.LENGTH_SHORT).show()
-
-            val query = binding.inputFriendname.text.toString()
-            Log.i("friendAdd", "친구요청 입력이름: ${query} ")
-            requestUser(query)
-        }*/
-
-/*        binding.friendSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                // 검색 버튼 누를 때 호출
-                if (!query.isNullOrEmpty()) {
-                    Log.i ("friendAdd", "검색 버튼 클릭")
-                    requestUser(query)
-                } else {
-                    Toast.makeText(this@FriendAddActivity, "검색어를 입력하세요", Toast.LENGTH_SHORT).show()
-                }
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                TODO("Not yet implemented")
-            }
-        })*/
+    }
+}
