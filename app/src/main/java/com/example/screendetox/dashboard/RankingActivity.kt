@@ -41,6 +41,7 @@ class RankingActivity : AppCompatActivity() {
     private lateinit var recyclerView : RecyclerView
     // user 정보를 담아서 adapter에 전달할 userList
     private lateinit var userList : ArrayList<User>
+    private lateinit var followList : ArrayList<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,7 +74,7 @@ class RankingActivity : AppCompatActivity() {
         userDB = Firebase.database.reference.child("Users")
         val currentUserDB = userDB.child(getCurrentUserID())
 
-        // 닉네임 및 목표 시간 설정
+        // 닉네임 설정
         currentUserDB.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.child("userName").value == null) {
@@ -85,7 +86,27 @@ class RankingActivity : AppCompatActivity() {
         })
         loadTodayDate()
         loadStatistics()
+        loadFollowList()
+        Log.i("followList", followList.size.toString())
         loadUsers()
+    }
+
+    private fun loadFollowList() {
+        followList = arrayListOf<String>()
+        userDB = Firebase.database.reference.child("Users")
+        val followingDB = userDB.child(getCurrentUserID()).child("following")
+        followingDB.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    //followList.clear()
+                    for (userSnapshot in snapshot.children) {
+                        val userId = userSnapshot.key
+                        followList.add(userId!!)
+                    }
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
     private fun loadTodayDate() {
@@ -154,7 +175,12 @@ class RankingActivity : AppCompatActivity() {
                     userList.clear()
                     for (userSnapshot in snapshot.children){
                         val user = userSnapshot.getValue(User::class.java)
-                        userList.add(user!!)
+                        if (followList.contains(user!!.userId)) {
+                            userList.add(user)
+                        }
+                        if (user!!.userId == getCurrentUserID()) {
+                            userList.add(user)
+                        }
                     }
                     adapter = UserAdapter()
                     recyclerView.adapter = adapter
