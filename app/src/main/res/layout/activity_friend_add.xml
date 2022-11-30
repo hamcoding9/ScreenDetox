@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".dashboard.FriendAddActivity">
+
+   <View
+       android:id="@+id/rankingHeader"
+       android:layout_width="match_parent"
+       android:layout_height="100dp"
+       android:background="@color/primaryBlue"
+       app:layout_constraintTop_toTopOf="parent" />
+
+   <SearchView
+       android:id="@+id/inputFriendname"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:lines="1"
+       app:layout_constraintTop_toTopOf="parent"
+       app:layout_constraintBottom_toBottomOf="@id/rankingHeader"
+       android:layout_marginStart="15dp"
+       android:layout_marginEnd="15dp"
+       android:hint="닉네임을 입력하시오"
+       android:inputType="text"
+       android:textColor="@color/black"
+       android:textSize="20sp"
+       android:background="@color/white">
+   </SearchView>
+
+<!--   <androidx.appcompat.widget.SearchView
+       android:id="@+id/friendSearchView"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       app:layout_constraintTop_toTopOf="parent"
+       android:layout_marginStart="10dp"
+       android:layout_marginEnd="100dp"
+       app:layout_constraintBottom_toBottomOf="@id/rankingHeader"
+       app:queryHint="닉네임을 입력하시오"
+       android:background="@color/white"
+       />-->
+
+<!--   <Button
+       android:id="@+id/friendRequestBtn"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       app:layout_constraintLeft_toRightOf="@id/inputFriendname"
+       app:layout_constraintTop_toTopOf="parent"
+       app:layout_constraintBottom_toBottomOf="@id/rankingHeader"
+       app:layout_constraintRight_toRightOf="@id/rankingHeader"
+       android:text="친구 요청"
+       android:textColor="@color/black"
+       android:backgroundTint="@color/white">
+   </Button>-->
+
+<!--   <TextView
+       android:id="@+id/requestedTV"
+       android:layout_width="0dp"
+       android:layout_height="wrap_content"
+       android:text="나에게 온 친구 요청"
+       android:textColor="@color/black"
+       app:layout_constraintTop_toTopOf="parent"
+       android:layout_marginTop="110dp"
+       app:layout_constraintLeft_toLeftOf="parent"
+       android:layout_marginLeft="10dp"
+       android:textStyle="bold">
+   </TextView>-->
+
+   <androidx.recyclerview.widget.RecyclerView
+       android:id="@+id/requestRecyclerView"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       tools:listitem="@layout/item_request"
+       app:layout_constraintTop_toBottomOf="@id/rankingHeader"
+       />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

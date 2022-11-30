@@ -5,6 +5,7 @@
     <uses-permission-sdk-23
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
+
     <application
         android:allowBackup="true"
         android:appCategory="accessibility"
@@ -16,7 +17,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ScreenDetox"
         tools:targetApi="31">
-
+        <activity
+            android:name=".dashboard.FriendAddActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".dashboard.FriendDetailActivity"
             android:exported="false">
@@ -52,11 +59,14 @@
                 android:value="" />
         </activity>
         <activity android:name=".LoginActivity" />
+
         <service
             android:name=".SaveService"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-        <receiver android:name=".AlarmReceiver"></receiver>
+
+        <receiver android:name=".AlarmReceiver" />
     </application>
+
 </manifest>
