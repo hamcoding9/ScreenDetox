@@ -18,51 +18,50 @@
         app:menu="@menu/bottom_navibar" />
 
     <View
+        android:id="@+id/rankingHeader"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:background="@color/primaryBlue"
-        android:id="@+id/rankingHeader"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/friendAddBtn"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        app:layout_constraintRight_toRightOf="@id/rankingHeader"
-        app:layout_constraintTop_toTopOf="parent"
         android:background="@android:color/transparent"
         android:src="@drawable/ic_baseline_person_add_24"
-        app:tint="@color/white"
-        />
+        app:layout_constraintRight_toRightOf="@id/rankingHeader"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white" />
 
     <TextView
+        android:id="@+id/rankingHeaderText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/rankingHeaderText"
+        android:layout_margin="30dp"
+        android:gravity="center"
         android:text="@string/rankingHeaderText"
         android:textColor="@color/white"
         android:textSize="30sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="30dp"
-        android:gravity="center"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/rankingDateTv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="17dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
         android:text="1970-01-01"
         android:textColor="@color/black"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/rankingHeader"
-        android:layout_marginTop="5dp"/>
+        android:textSize="17dp"
+        app:layout_constraintTop_toBottomOf="@id/rankingHeader" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/usersRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:listitem="@layout/item_user"
-        app:layout_constraintTop_toBottomOf="@id/rankingDateTv"/>
+        app:layout_constraintTop_toBottomOf="@id/rankingDateTv"
+        tools:listitem="@layout/item_user" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
