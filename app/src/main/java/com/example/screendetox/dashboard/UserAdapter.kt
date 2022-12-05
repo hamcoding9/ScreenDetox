@@ -18,8 +18,8 @@ class UserAdapter : ListAdapter<User, UserAdapter.ViewHolder>(diffUtil){
             binding.nameTv.text = item.userName
             binding.durationTv.text = getDurationBreakdown(item.totalTime)
 
-            //totalTime이 goalTime(현재는 default: 3Hours) 넘었으면 색 바꾸기
-            if (item.totalTime!! > 3 * 3600000){
+            //totalTime이 goalTime(현재는 default: 5Hours) 넘었으면 색 바꾸기
+            if (item.totalTime!! > 5 * 3600000){
                 binding.durationTv.setTextColor(ContextCompat.getColor(itemView.context, R.color.red))
             }
 
