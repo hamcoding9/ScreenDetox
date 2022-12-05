@@ -1,5 +1,6 @@
 package com.example.screendetox.dashboard
 
+import android.app.usage.UsageEvents
 import android.app.usage.UsageStats
 import android.app.usage.UsageStatsManager
 import android.content.Intent
@@ -24,8 +25,10 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
+
 
 // 랭킹 대시보드 Activity
 class RankingActivity : AppCompatActivity() {
@@ -48,7 +51,6 @@ class RankingActivity : AppCompatActivity() {
         binding = ActivityRankingBinding.inflate(layoutInflater)
         setContentView(binding.root)
         // 네비게이션 탭바 터치에 따른 액티비티 이동
-        //Use NavigationBarView.setOnItemReselectedListener(NavigationBarView.OnItemReselectedListener) instead.
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.ranking -> {
@@ -87,7 +89,6 @@ class RankingActivity : AppCompatActivity() {
         loadTodayDate()
         loadStatistics()
         loadFollowList()
-        Log.i("followList", followList.size.toString())
         loadUsers()
     }
 
@@ -132,6 +133,51 @@ class RankingActivity : AppCompatActivity() {
             .collect(Collectors.toList())
         // 내 사용 기록 불러 왔으니 나의 사용 기록을 DB에 업데이트
         saveAppUsage(appList)
+    }
+
+    private fun getTimeSpent(): HashMap<String, Int?> {
+        val usageStatsManager = this.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
+        // today 기준 12am 불러오기
+        val beginTime: Calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY, 14)
+        }
+        var currentEvent: UsageEvents.Event
+        val allEvents: MutableList<UsageEvents.Event> = ArrayList()
+        val appUsageMap: HashMap<String, Int?> = HashMap()
+        // 12am 부터 현재 시간까지 모든 usageEvents 불러오기
+        val usageEvents = usageStatsManager.queryEvents(beginTime.timeInMillis, System.currentTimeMillis())
+        while (usageEvents.hasNextEvent()) {
+            currentEvent = UsageEvents.Event()
+            usageEvents.getNextEvent(currentEvent)
+//            if (currentEvent.eventType == UsageEvents.Event.ACTIVITY_RESUMED || currentEvent.eventType == UsageEvents.Event.ACTIVITY_PAUSED)
+            if (currentEvent.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
+                allEvents.add(currentEvent)
+                val key = currentEvent.packageName
+                if (appUsageMap[key] == null) appUsageMap[key] = 0
+            }
+        }
+        for (i in 0 until allEvents.size - 1) {
+            val e0 = allEvents[i]
+            val e1 = allEvents[i + 1]
+//            if (e0.eventType == UsageEvents.Event.ACTIVITY_RESUMED && e1.eventType == UsageEvents.Event.ACTIVITY_PAUSED && e0.className == e1.className)
+            if (e0.eventType == UsageEvents.Event.ACTIVITY_RESUMED && e0.className == e1.className) {
+                var diff = (e1.timeStamp - e0.timeStamp).toInt()
+                diff /= 1000
+                var prev = appUsageMap[e0.packageName]
+                if (prev == null) prev = 0
+                appUsageMap[e0.packageName] = prev + diff
+            }
+        }
+        val lastEvent = allEvents[allEvents.size - 1]
+        if (lastEvent.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
+            var diff = System.currentTimeMillis().toInt() - lastEvent.timeStamp.toInt()
+            diff /= 1000
+            var prev = appUsageMap[lastEvent.packageName]
+            if (prev == null) prev = 0
+            appUsageMap[lastEvent.packageName] = prev + diff
+        }
+        return appUsageMap
     }
 
     private fun saveAppUsage(appList: MutableList<UsageStats>) {
