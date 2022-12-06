@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.screendetox.R
 import com.example.screendetox.data.User
+import com.example.screendetox.data.appNameMap
 import com.example.screendetox.databinding.ActivityRankingBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -199,7 +200,10 @@ class RankingActivity : AppCompatActivity() {
         var appList = appList.sortedBy { it.totalTimeInForeground }
         val mostAppStats = appList.last()
         val packageName = mostAppStats.packageName
-        val appName = packageName.split(".").last()
+        var appName = packageName.split(".").last()
+        if (appNameMap.contains(packageName)) {
+            appName = appNameMap[packageName]!!
+        }
         return appName
     }
 
@@ -321,4 +325,3 @@ class RankingActivity : AppCompatActivity() {
         currentUserDB.updateChildren(user)
     }
 }
-
