@@ -27,6 +27,7 @@ class RequestAdapter(
         holder.user_name.text = currentItem.userName
         holder.follow_btn.setOnClickListener {
             listener(currentItem)
+            it.visibility = View.GONE
         }
     }
 
