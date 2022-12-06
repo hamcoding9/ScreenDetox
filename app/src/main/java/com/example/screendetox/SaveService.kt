@@ -168,7 +168,7 @@ class SaveService : JobService() {
         val notification = NotificationCompat.Builder(this, "screendetox")
             .setContentTitle("Screen Detox")
             .setContentText("${name}님의 스마트폰 사용 시간이 5시간을 넘었습니다.")
-            .setSmallIcon(R.drawable.ic_baseline_person_24)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(activityPendingIntent)
             .setAutoCancel(true)
             .build()
