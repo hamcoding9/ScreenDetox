@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.screendetox.SaveService
 import com.example.screendetox.data.User
 import com.example.screendetox.databinding.ActivityFriendAddBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -91,9 +90,9 @@ class FriendAddActivity : AppCompatActivity() {
     }
 
     private fun getCurrentUserID(): String {
-        if (SaveService.auth.currentUser == null){
+        if (auth.currentUser == null){
         }
-        return SaveService.auth.currentUser?.uid.orEmpty()
+        return auth.currentUser?.uid.orEmpty()
     }
 
     // follow 버튼에 달 click listener 람다 함수

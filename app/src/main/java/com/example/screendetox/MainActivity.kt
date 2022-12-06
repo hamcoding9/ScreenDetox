@@ -55,7 +55,6 @@ class MainActivity : AppCompatActivity() {
                 timeInMillis = System.currentTimeMillis()
                 set(Calendar.HOUR_OF_DAY, 21)
             }
-
             alarmManager.setRepeating(
                 AlarmManager.RTC_WAKEUP,
                 calendar.timeInMillis,
@@ -82,7 +81,7 @@ class MainActivity : AppCompatActivity() {
         val componentName = ComponentName(this, SaveService::class.java)
         val info = JobInfo.Builder(1, componentName)
             .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
-            .setPeriodic(DateUtils.MINUTE_IN_MILLIS * 5) // 30분마다 반복적
+            .setPeriodic(DateUtils.MINUTE_IN_MILLIS * 5) // 5분마다 반복적
             .build()
         val jobScheduler: JobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
         val resultCode = jobScheduler.schedule(info)
