@@ -5,11 +5,14 @@ import android.app.usage.UsageStatsManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.screendetox.R
 import com.example.screendetox.data.App
+import com.example.screendetox.data.appNameMap
 import com.example.screendetox.databinding.ActivityStatsBinding
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -94,6 +97,12 @@ class StatsActivity : AppCompatActivity() {
                     val ai = applicationContext.packageManager.getApplicationInfo(packageName, 0)
                     icon = applicationContext.packageManager.getApplicationIcon(ai)
                     appName = applicationContext.packageManager.getApplicationLabel(ai).toString()
+                }
+                if (appNameMap.contains(appName)) {
+                    appName = appNameMap[appName]!!
+                    val iconId = this.resources.getIdentifier(appName.lowercase(), "drawable", this.packageName)
+                    Log.i("StatsActivity", iconId.toString())
+                    icon = ResourcesCompat.getDrawable(resources, iconId, null)
                 }
                 val usageDuration = getDurationBreakdown(usageStats.totalTimeInForeground)
                 val usagePercentage = (usageStats.totalTimeInForeground * 100 / totalTime).toInt()

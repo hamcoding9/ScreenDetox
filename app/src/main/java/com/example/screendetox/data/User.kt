@@ -8,4 +8,4 @@ data class User (
     //var goalTime: Long ?= null,
     var totalTime: Long ?= null,
     var mostUsedApp: String ?= null,
-    )
+)
