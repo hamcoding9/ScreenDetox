@@ -69,10 +69,10 @@ class StatsActivity : AppCompatActivity() {
     private fun loadStatistics() {
         appsList = arrayListOf<App>()
         val usm = this.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
-        val midnight : Long = (System.currentTimeMillis() / 86400000) * 86400000 - (9 * 3600000)
+        //val midnight : Long = (System.currentTimeMillis() / 86400000) * 86400000 - (9 * 3600000)
         var appList = usm.queryUsageStats(
-            UsageStatsManager.INTERVAL_BEST,
-            midnight,
+            UsageStatsManager.INTERVAL_DAILY,
+            System.currentTimeMillis() - 1000 * 3600 * 24,
             System.currentTimeMillis())
         // 지난 24시간 동안 사용한 어플리케이션(사용 시간 > 0인 것만 filter)만 불러오기
         // totalTimeInForeground: Get the total time this package spent in the foreground, measured in milliseconds.

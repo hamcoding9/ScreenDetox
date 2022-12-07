@@ -28,7 +28,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.TimeUnit
-import java.util.stream.Collectors
 
 
 // 랭킹 대시보드 Activity
@@ -120,66 +119,24 @@ class RankingActivity : AppCompatActivity() {
     }
 
     private fun loadStatistics() {
-        val usm = this.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
-        val midnight : Long = (System.currentTimeMillis() / 86400000) * 86400000 - (9 * 3600000)
-        Log.i("timeStamp", "${midnight}")
-        Log.i("timeStamp", "${System.currentTimeMillis()}")
+        val usm = getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
+        //val midnight : Long = (System.currentTimeMillis() / 86400000) * 86400000 - (9 * 3600000)
         // 오늘 0시를 기준으로 현재까지의 사용 통계 받아오기
         var appList = usm.queryUsageStats(
-            UsageStatsManager.INTERVAL_BEST,
-            midnight,
-            System.currentTimeMillis())
+            UsageStatsManager.INTERVAL_DAILY,
+            System.currentTimeMillis() - 1000 * 3600 * 24,
+            System.currentTimeMillis()
+        )
+        Log.i("RankingActivity", "appList size: ${appList.size}")
         // 지난 24시간 동안 사용한 어플리케이션(사용 시간 > 0인 것만 filter)만 불러오기
         // totalTimeInForeground: Get the total time this package spent in the foreground, measured in milliseconds.
-        appList = appList.stream().filter{ app: UsageStats -> app.totalTimeInForeground > 0}
-            .collect(Collectors.toList())
+        appList = appList.filter {
+            usageStats -> usageStats.totalTimeVisible > 0
+        }
+        Log.i("RankingActivity", "appList size: ${appList.size}")
+
         // 내 사용 기록 불러 왔으니 나의 사용 기록을 DB에 업데이트
         saveAppUsage(appList)
-    }
-
-    private fun getTimeSpent(): HashMap<String, Int?> {
-        val usageStatsManager = this.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
-        // today 기준 12am 불러오기
-        val beginTime: Calendar = Calendar.getInstance().apply {
-            timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, 14)
-        }
-        var currentEvent: UsageEvents.Event
-        val allEvents: MutableList<UsageEvents.Event> = ArrayList()
-        val appUsageMap: HashMap<String, Int?> = HashMap()
-        // 12am 부터 현재 시간까지 모든 usageEvents 불러오기
-        val usageEvents = usageStatsManager.queryEvents(beginTime.timeInMillis, System.currentTimeMillis())
-        while (usageEvents.hasNextEvent()) {
-            currentEvent = UsageEvents.Event()
-            usageEvents.getNextEvent(currentEvent)
-//            if (currentEvent.eventType == UsageEvents.Event.ACTIVITY_RESUMED || currentEvent.eventType == UsageEvents.Event.ACTIVITY_PAUSED)
-            if (currentEvent.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
-                allEvents.add(currentEvent)
-                val key = currentEvent.packageName
-                if (appUsageMap[key] == null) appUsageMap[key] = 0
-            }
-        }
-        for (i in 0 until allEvents.size - 1) {
-            val e0 = allEvents[i]
-            val e1 = allEvents[i + 1]
-//            if (e0.eventType == UsageEvents.Event.ACTIVITY_RESUMED && e1.eventType == UsageEvents.Event.ACTIVITY_PAUSED && e0.className == e1.className)
-            if (e0.eventType == UsageEvents.Event.ACTIVITY_RESUMED && e0.className == e1.className) {
-                var diff = (e1.timeStamp - e0.timeStamp).toInt()
-                diff /= 1000
-                var prev = appUsageMap[e0.packageName]
-                if (prev == null) prev = 0
-                appUsageMap[e0.packageName] = prev + diff
-            }
-        }
-        val lastEvent = allEvents[allEvents.size - 1]
-        if (lastEvent.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
-            var diff = System.currentTimeMillis().toInt() - lastEvent.timeStamp.toInt()
-            diff /= 1000
-            var prev = appUsageMap[lastEvent.packageName]
-            if (prev == null) prev = 0
-            appUsageMap[lastEvent.packageName] = prev + diff
-        }
-        return appUsageMap
     }
 
     private fun saveAppUsage(appList: MutableList<UsageStats>) {
@@ -210,7 +167,8 @@ class RankingActivity : AppCompatActivity() {
 
     private fun getTotalTime(appList: MutableList<UsageStats>): Long {
         // 전체 사용 시간 구하기
-        val totalTime = appList.stream().map {obj:UsageStats -> obj.totalTimeInForeground }.mapToLong{obj: Long -> obj}.sum()
+        val totalTime = appList.stream().map { obj: UsageStats -> obj.totalTimeInForeground }
+            .mapToLong {obj : Long -> obj }.sum()
         // 전체 사용 시간을 @시간@분@초 형태로 바꾸기
         return totalTime
     }
@@ -324,5 +282,51 @@ class RankingActivity : AppCompatActivity() {
         user["userId"] = userId
         user["goalTime"] = goal.toLong()
         currentUserDB.updateChildren(user)
+    }
+
+
+    private fun getTimeSpent(): HashMap<String, Int?> {
+        val usageStatsManager = this.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
+        // today 기준 12am 불러오기
+        val beginTime: Calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY, 14)
+        }
+        var currentEvent: UsageEvents.Event
+        val allEvents: MutableList<UsageEvents.Event> = java.util.ArrayList()
+        val appUsageMap: HashMap<String, Int?> = HashMap()
+        // 12am 부터 현재 시간까지 모든 usageEvents 불러오기
+        val usageEvents = usageStatsManager.queryEvents(beginTime.timeInMillis, System.currentTimeMillis())
+        while (usageEvents.hasNextEvent()) {
+            currentEvent = UsageEvents.Event()
+            usageEvents.getNextEvent(currentEvent)
+//            if (currentEvent.eventType == UsageEvents.Event.ACTIVITY_RESUMED || currentEvent.eventType == UsageEvents.Event.ACTIVITY_PAUSED)
+            if (currentEvent.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
+                allEvents.add(currentEvent)
+                val key = currentEvent.packageName
+                if (appUsageMap[key] == null) appUsageMap[key] = 0
+            }
+        }
+        for (i in 0 until allEvents.size - 1) {
+            val e0 = allEvents[i]
+            val e1 = allEvents[i + 1]
+//            if (e0.eventType == UsageEvents.Event.ACTIVITY_RESUMED && e1.eventType == UsageEvents.Event.ACTIVITY_PAUSED && e0.className == e1.className)
+            if (e0.eventType == UsageEvents.Event.ACTIVITY_RESUMED && e0.className == e1.className) {
+                var diff = (e1.timeStamp - e0.timeStamp).toInt()
+                diff /= 1000
+                var prev = appUsageMap[e0.packageName]
+                if (prev == null) prev = 0
+                appUsageMap[e0.packageName] = prev + diff
+            }
+        }
+        val lastEvent = allEvents[allEvents.size - 1]
+        if (lastEvent.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
+            var diff = System.currentTimeMillis().toInt() - lastEvent.timeStamp.toInt()
+            diff /= 1000
+            var prev = appUsageMap[lastEvent.packageName]
+            if (prev == null) prev = 0
+            appUsageMap[lastEvent.packageName] = prev + diff
+        }
+        return appUsageMap
     }
 }

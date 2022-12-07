@@ -107,10 +107,10 @@ class SaveService : JobService() {
 
     private fun saveUserDuration() {
         val usm = this.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
-        val midnight: Long = (System.currentTimeMillis() / 86400000) * 86400000 - (9 * 3600000)
+        //val midnight: Long = (System.currentTimeMillis() / 86400000) * 86400000 - (9 * 3600000)
         var appList = usm.queryUsageStats(
             UsageStatsManager.INTERVAL_DAILY,
-            midnight,
+            System.currentTimeMillis() - 1000 * 3600 * 24,
             System.currentTimeMillis()
         )
         appList = appList.stream().filter { app: UsageStats -> app.totalTimeInForeground > 0 }
