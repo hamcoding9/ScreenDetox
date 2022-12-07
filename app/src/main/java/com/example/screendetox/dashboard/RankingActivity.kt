@@ -52,18 +52,19 @@ class RankingActivity : AppCompatActivity() {
         binding = ActivityRankingBinding.inflate(layoutInflater)
         setContentView(binding.root)
         // 네비게이션 탭바 터치에 따른 액티비티 이동
+        binding.bottomNavigationView.selectedItemId = R.id.ranking
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.ranking -> {
+                    true
                 }
                 R.id.stats -> {
                     startActivity(Intent(this, StatsActivity::class.java))
                     overridePendingTransition(0,0)
+                    true
                 }
-                else -> {
-                }
+                else -> false
             }
-            true
         }
         recyclerView = binding.usersRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)

@@ -15,7 +15,10 @@
         app:backgroundTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_navibar" />
+        app:menu="@menu/bottom_navibar"
+        app:itemIconTint="@drawable/selector"
+        app:itemTextColor="@drawable/selector"
+        />
 
     <View
         android:id="@+id/rankingHeader"
