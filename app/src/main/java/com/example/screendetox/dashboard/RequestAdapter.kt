@@ -26,7 +26,7 @@ class RequestAdapter(
         val currentItem = userNameList[position]
         holder.user_name.text = currentItem.userName
         holder.follow_btn.setOnClickListener {
-            it.visibility = View.GONE
+            holder.follow_btn.text = "친구 삭제"
             listener(currentItem)
         }
     }

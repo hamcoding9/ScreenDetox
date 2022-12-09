@@ -194,6 +194,7 @@ class RankingActivity : AppCompatActivity() {
                     adapter = UserAdapter()
                     recyclerView.adapter = adapter
                     adapter.submitList(userList)
+                    userList.sortByDescending { it.totalTime }
                     // user간 구분선 추가
                     //val decoration = DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL)
                     //recyclerView.addItemDecoration(decoration)
